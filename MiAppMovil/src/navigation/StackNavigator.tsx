@@ -14,9 +14,9 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 //3. utilizar el stack 
 export default function StackNavigator(){
     return(
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: true}}>
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Home" component={HomeScreen} />
         </Stack.Navigator>
-    )
+    );
 }

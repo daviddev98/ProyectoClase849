@@ -12,7 +12,6 @@ const [phoneNumber, setPhoneNumber] = useState("");
 
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
       
        <CustomInput 
         placeholder={"Ingresa tu nombre"} 

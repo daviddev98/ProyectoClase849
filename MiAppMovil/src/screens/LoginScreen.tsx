@@ -14,7 +14,6 @@ export default function LoginScreen({navigation}:any) {
         }
     }
 
-
     return(
         <View>
             <CustomInput placeholder={"Ingresa tu correo"} 
@@ -23,9 +22,11 @@ export default function LoginScreen({navigation}:any) {
 
             <CustomInput type={"password"} 
             placeholder={"Ingresa tu contraseña"} 
-            value={""} 
-            onChange={()=>{}}/>
-            <CustomButton title={"Iniciar Sesion"} onPress={handleLogin}/>
+            value={email} 
+            onChange={setEmail}/>
+            
+            <CustomButton title={"Iniciar Sesion"} 
+            onPress={handleLogin}/>
         </View>
     )
 }
