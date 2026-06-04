@@ -5,17 +5,21 @@ import { AuthProvider } from "./src/contexts/AuthContext";
 import { LanguageProvider } from "./src/contexts/LanguageContext";
 import { SkincareProvider } from "./src/contexts/SkincareContext";
 import { ThemeProvider } from "./src/contexts/ThemeContext";
+import { Provider } from "react-redux";
+import { store } from "./src/store";
 
 export default function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
         <AuthProvider>
-          <SkincareProvider>
-            <NavigationContainer ref={navigationRef}>
-              <StackNavigator />
-            </NavigationContainer>
-          </SkincareProvider>
+         
+            <Provider store={store}>
+              <NavigationContainer ref={navigationRef}>
+                <StackNavigator />
+              </NavigationContainer>
+            </Provider>
+
         </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>
