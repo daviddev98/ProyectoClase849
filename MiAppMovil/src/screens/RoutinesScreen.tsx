@@ -2,9 +2,10 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ScreenWrapper from "../components/ScreenWrapper";
 import SectionTitle from "../components/SectionTitle";
-import { useSkincare } from "../contexts/SkincareContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { CATEGORY_LABELS } from "../utils/types/Skincare";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { addToRoutine, removeFromRoutine } from "../store/slices/skincareSlice";
 
 type RoutineSectionProps = {
   title: string;
@@ -13,17 +14,23 @@ type RoutineSectionProps = {
   type: "morning" | "night";
 };
 
-function RoutineSection({ title, icon, productIds, type }: RoutineSectionProps) {
-  const { products, addToRoutine, removeFromRoutine } = useSkincare();
+function RoutineSection({
+  title,
+  icon,
+  productIds,
+  type,
+}: RoutineSectionProps) {
+  const dispatch = useAppDispatch();
+  const products = useAppSelector((state) => state.skincare.products);
+
   const { colors } = useTheme();
 
   const routineProducts = productIds
     .map((id) => products.find((p) => p.id === id))
     .filter(Boolean);
 
-  const availableProducts = products.filter(
-    (p) => !productIds.includes(p.id)
-  );
+  const availableProducts = products.filter((p) => !productIds.includes(p.id));
+
 
   return (
     <View style={[styles.section, { backgroundColor: colors.inputBackground }]}>
@@ -44,21 +51,31 @@ function RoutineSection({ title, icon, productIds, type }: RoutineSectionProps) 
       ) : (
         routineProducts.map((product, index) => (
           <View key={product!.id} style={styles.routineItem}>
-            <View style={[styles.stepBadge, { backgroundColor: colors.secondary }]}>
+            <View
+              style={[styles.stepBadge, { backgroundColor: colors.secondary }]}
+            >
               <Text style={styles.stepNumber}>{index + 1}</Text>
             </View>
             <View style={styles.itemInfo}>
-              <Text style={[styles.itemName, { color: colors.buttonTertiaryText }]}>
+              <Text
+                style={[styles.itemName, { color: colors.buttonTertiaryText }]}
+              >
                 {product!.name}
               </Text>
-              <Text style={[styles.itemCategory, { color: colors.textSecondary }]}>
+              <Text
+                style={[styles.itemCategory, { color: colors.textSecondary }]}
+              >
                 {CATEGORY_LABELS[product!.category]}
               </Text>
             </View>
             <TouchableOpacity
-              onPress={() => removeFromRoutine(type, product!.id)}
+              onPress={() => dispatch(removeFromRoutine({type, productId: product!.id}))}
             >
-              <Ionicons name="close-circle" size={22} color={colors.secondary} />
+              <Ionicons
+                name="close-circle"
+                size={22}
+                color={colors.secondary}
+              />
             </TouchableOpacity>
           </View>
         ))
@@ -73,10 +90,19 @@ function RoutineSection({ title, icon, productIds, type }: RoutineSectionProps) 
             <TouchableOpacity
               key={product.id}
               style={[styles.addItem, { borderColor: colors.secondary }]}
-              onPress={() => addToRoutine(type, product.id)}
+              onPress={() => dispatch(addToRoutine({type, productId: product!.id}))}
             >
-              <Ionicons name="add-circle-outline" size={20} color={colors.secondary} />
-              <Text style={[styles.addItemText, { color: colors.buttonTertiaryText }]}>
+              <Ionicons
+                name="add-circle-outline"
+                size={20}
+                color={colors.secondary}
+              />
+              <Text
+                style={[
+                  styles.addItemText,
+                  { color: colors.buttonTertiaryText },
+                ]}
+              >
                 {product.name}
               </Text>
             </TouchableOpacity>
@@ -88,7 +114,8 @@ function RoutineSection({ title, icon, productIds, type }: RoutineSectionProps) 
 }
 
 export default function RoutinesScreen() {
-  const { routine, products } = useSkincare();
+  const products = useAppSelector((state) => state.skincare.products);
+  const routine = useAppSelector((state) => state.skincare.routine);
   const { colors } = useTheme();
 
   return (
@@ -100,7 +127,8 @@ export default function RoutinesScreen() {
 
       {products.length === 0 ? (
         <Text style={[styles.noProducts, { color: colors.textSecondary }]}>
-          Primero registra productos en la pestaña Productos para armar tus rutinas.
+          Primero registra productos en la pestaña Productos para armar tus
+          rutinas.
         </Text>
       ) : (
         <>
