@@ -1,59 +1,30 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ScreenWrapper from '../components/ScreenWrapper';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
-import { supabase } from '../services/supabaseClient'; // 👈 importar el cliente
+import { useTheme } from '../contexts/ThemeContext';
 
 const RegisterScreen = ({ navigation }: any) => {
+  const { colors } = useTheme();
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); // 👈 para deshabilitar el botón mientras carga
 
-  const handleRegister = async () => {
-    // Validación básica (Actividad 2)
+  const handleRegister = () => {
     if (!name.trim() || !phoneNumber.trim() || !email.trim() || !password.trim()) {
       Alert.alert('Campos incompletos', 'Por favor completa todos los campos.');
       return;
     }
 
-    setLoading(true);
-
-    // Llamada a Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
-      email: email.trim(),
-      password: password.trim(),
-    });
-
-    setLoading(false);
-
-    // Manejo de error
-    if (error) {
-      Alert.alert('Error al registrarse', error.message);
-      return;
-    }
-
-    // Registro exitoso
-    if (data.user) {
-      Alert.alert(
-        '¡Registro exitoso!',
-        'Tu cuenta fue creada correctamente.',
-        [
-          {
-            text: 'Iniciar sesión',
-            onPress: () => navigation.navigate('Login'),
-          },
-        ]
-      );
-    }
+    // La lógica de registro con Supabase se implementará en la Actividad 3
   };
 
   return (
     <ScreenWrapper>
       <View style={styles.container}>
-        <Text style={styles.title}>Crear cuenta</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Crear cuenta</Text>
 
         <CustomInput
           placeholder="Nombre completo"
@@ -83,10 +54,16 @@ const RegisterScreen = ({ navigation }: any) => {
         />
 
         <CustomButton
-          title={loading ? 'Registrando...' : 'Registrarse'}
+          title="Registrarse"
           variant="primary"
           onPress={handleRegister}
         />
+
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={[styles.link, { color: colors.primary }]}>
+            ¿Ya tienes cuenta? Inicia sesión
+          </Text>
+        </TouchableOpacity>
       </View>
     </ScreenWrapper>
   );
@@ -104,6 +81,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     textAlign: 'center',
+  },
+  link: {
+    marginTop: 8,
+    textAlign: 'center',
+    fontSize: 15,
   },
 });
 

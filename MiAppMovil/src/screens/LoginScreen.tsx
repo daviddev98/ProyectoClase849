@@ -1,11 +1,13 @@
 // src/screens/LoginScreen.tsx
 import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ScreenWrapper from '../components/ScreenWrapper';
 import CustomButton from '../components/CustomButton';
+import { useTheme } from '../contexts/ThemeContext';
 import { supabase } from '../services/supabaseClient';
 
 const LoginScreen = ({ navigation }: any) => {
+  const { colors } = useTheme();
 
   const handleGoogleLogin = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -24,7 +26,7 @@ const LoginScreen = ({ navigation }: any) => {
   return (
     <ScreenWrapper>
       <View style={styles.container}>
-        <Text style={styles.title}>Iniciar sesión</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Iniciar sesión</Text>
 
         {/* Botón SSO Google */}
         <CustomButton
@@ -33,6 +35,11 @@ const LoginScreen = ({ navigation }: any) => {
           onPress={handleGoogleLogin}
         />
 
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text style={[styles.link, { color: colors.primary }]}>
+            ¿No tienes cuenta? Regístrate
+          </Text>
+        </TouchableOpacity>
       </View>
     </ScreenWrapper>
   );
@@ -50,6 +57,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     textAlign: 'center',
+  },
+  link: {
+    marginTop: 8,
+    textAlign: 'center',
+    fontSize: 15,
   },
 });
 
