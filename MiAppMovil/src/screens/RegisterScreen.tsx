@@ -4,6 +4,7 @@ import ScreenWrapper from '../components/ScreenWrapper';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import { useTheme } from '../contexts/ThemeContext';
+import { supabase } from '../services/supabaseClient';
 
 const RegisterScreen = ({ navigation }: any) => {
   const { colors } = useTheme();
@@ -11,14 +12,40 @@ const RegisterScreen = ({ navigation }: any) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!name.trim() || !phoneNumber.trim() || !email.trim() || !password.trim()) {
       Alert.alert('Campos incompletos', 'Por favor completa todos los campos.');
       return;
     }
 
-    // La lógica de registro con Supabase se implementará en la Actividad 3
+    setLoading(true);
+
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password: password.trim(),
+    });
+
+    setLoading(false);
+
+    if (error) {
+      Alert.alert('Error al registrarse', error.message);
+      return;
+    }
+
+    if (data.user) {
+      Alert.alert(
+        '¡Registro exitoso!',
+        'Tu cuenta fue creada correctamente.',
+        [
+          {
+            text: 'Iniciar sesión',
+            onPress: () => navigation.navigate('Login'),
+          },
+        ]
+      );
+    }
   };
 
   return (
@@ -54,7 +81,7 @@ const RegisterScreen = ({ navigation }: any) => {
         />
 
         <CustomButton
-          title="Registrarse"
+          title={loading ? 'Registrando...' : 'Registrarse'}
           variant="primary"
           onPress={handleRegister}
         />
