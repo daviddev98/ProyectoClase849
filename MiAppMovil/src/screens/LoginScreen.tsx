@@ -19,7 +19,6 @@ const LoginScreen = ({ navigation }: any) => {
       return;
     }
 
-    // Supabase abre automáticamente el navegador para autenticarse con Google
     console.log('Redirigiendo a Google...', data);
   };
 
